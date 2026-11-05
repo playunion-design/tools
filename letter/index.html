@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<title>UNION Letterhead Maker</title>
+<style>
+@font-face { font-family: "SG"; font-weight: 400; src: url("fonts/SpecialGothic-Regular.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "SG"; font-weight: 700; src: url("fonts/SpecialGothic-Bold.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "JBM"; font-weight: 500; src: url("fonts/JetBrainsMono-Medium.woff2") format("woff2"); font-display: block; }
+@font-face { font-family: "SGCO"; font-weight: 400; src: url("../assets/fonts/sgco-latin.woff2") format("woff2"); font-display: swap; }
+:root {
+  --bg:#FCFFED; --surface:#F2F5E1; --ink:#0A0C14; --muted:#565C6E; --line:#CFD4BC;
+  --accent:#005EFF; --accent-ink:#FCFFED; --bad:#C4161C; --ok:#0A7A3E; --field:#FFFFFF;
+  --display:"SGCO","Roboto Condensed","Arial Narrow",Arial,sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg:#070A12; --surface:#101624; --ink:#FCFFED; --muted:#A0A8BD; --line:#263049; --accent:#5C95FF; --accent-ink:#050B1A; --bad:#FF6B70; --ok:#5BD58F; --field:#0B1020; color-scheme:dark; }
+}
+:root[data-theme="dark"] { --bg:#070A12; --surface:#101624; --ink:#FCFFED; --muted:#A0A8BD; --line:#263049; --accent:#5C95FF; --accent-ink:#050B1A; --bad:#FF6B70; --ok:#5BD58F; --field:#0B1020; color-scheme:dark; }
+* { box-sizing:border-box; }
+[hidden] { display:none !important; }
+html { -webkit-text-size-adjust:100%; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 var(--body);
+  padding-block:28px 72px; padding-left:max(16px,env(safe-area-inset-left,0px)); padding-right:max(16px,env(safe-area-inset-right,0px)); }
+.wrap { max-width:1180px; margin:0 auto; }
+.back { font:500 12px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted); text-decoration:none; }
+.back:hover { color:var(--accent); }
+.eyebrow { font:500 12px/1.2 var(--mono); letter-spacing:.16em; text-transform:uppercase; color:var(--muted); margin:22px 0 0; }
+h1 { font-family:var(--display); font-weight:400; font-size:clamp(44px,8vw,80px); line-height:.92; text-transform:uppercase; margin:12px 0 10px; text-wrap:balance; }
+.lead { color:var(--muted); max-width:60ch; margin:0 0 26px; }
+.grid { display:grid; grid-template-columns:minmax(0,440px) minmax(0,1fr); gap:28px; align-items:start; }
+@media (max-width:900px) { .grid { grid-template-columns:minmax(0,1fr); } }
+.panel { background:var(--surface); border:2px solid var(--line); border-radius:28px; padding:20px 20px 22px; display:grid; gap:16px; min-width:0; }
+fieldset { border:0; margin:0; padding:0; display:grid; gap:8px; min-width:0; }
+legend, label.l { font:500 11px/1.2 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted); padding:0; }
+input[type=text], select, textarea { width:100%; font:16px/1.4 var(--body); color:var(--ink); background:var(--field); border:2px solid var(--line); border-radius:14px; padding:10px 12px; }
+textarea { resize:vertical; min-height:70px; }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible, a:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:480px) { .row2 { grid-template-columns:1fr; } }
+.opts { display:grid; gap:8px; }
+.opt { display:flex; gap:10px; align-items:center; padding:10px 12px; border:2px solid var(--line); border-radius:14px; background:var(--field); cursor:pointer; }
+.opt:has(input:checked) { border-color:var(--accent); }
+.opt input { accent-color:var(--accent); width:18px; height:18px; margin:0; }
+.hint { font-size:13px; color:var(--muted); margin:0; }
+.btn { appearance:none; border:0; cursor:pointer; font:600 16px/1 var(--body); border-radius:999px; padding:16px 24px; background:var(--accent); color:var(--accent-ink); }
+.btn.sec { background:transparent; color:var(--ink); border:2px solid var(--line); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.gauge { display:grid; gap:6px; }
+.bar { height:10px; border-radius:6px; background:var(--line); overflow:hidden; }
+.bar > i { display:block; height:100%; width:0; background:var(--accent); transition:width .12s; }
+.bar.full > i { background:var(--bad); }
+.gtxt { font:500 12px/1.3 var(--mono); letter-spacing:.06em; color:var(--muted); }
+.gtxt.bad { color:var(--bad); }
+.warn { font-size:13px; color:var(--bad); margin:0; }
+.preview { position:sticky; top:12px; display:grid; gap:12px; min-width:0; }
+.sheet { background:#777; border-radius:18px; padding:14px; }
+canvas { display:block; width:100%; height:auto; box-shadow:0 6px 24px rgba(0,0,0,.25); background:#fff; }
+.actions { display:grid; gap:10px; }
+.fileline { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.fileline input[type=file] { font-size:14px; max-width:100%; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="../">&larr; Press tools</a>
+  <p class="eyebrow">UNION · Press conference · 26 Nov 2026</p>
+  <h1>Letterhead maker</h1>
+  <p class="lead">Write a letter on the UNION letterhead, choose the logos, and download it as an A4 PDF. The text has a limit: it must fit on one page.</p>
+
+  <div class="grid">
+    <form class="panel" id="f" onsubmit="return false" autocomplete="off">
+      <fieldset>
+        <legend>Start from</legend>
+        <select id="preset" aria-label="Start from a ready letter"></select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Logos</legend>
+        <div class="opts" role="radiogroup">
+          <label class="opt"><input type="radio" name="logos" value="both" checked> SEAEF + PLAY UNION</label>
+          <label class="opt"><input type="radio" name="logos" value="pu"> PLAY UNION only</label>
+          <label class="opt"><input type="radio" name="logos" value="se"> SEAEF only</label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <label class="l" for="date">Date</label>
+        <input type="text" id="date">
+      </fieldset>
+
+      <fieldset>
+        <label class="l" for="addr">To (first line in bold)</label>
+        <textarea id="addr" rows="4"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <label class="l" for="subject">Subject (optional)</label>
+        <textarea id="subject" rows="2"></textarea>
+      </fieldset>
+
+      <fieldset>
+        <label class="l" for="sal">Greeting</label>
+        <input type="text" id="sal">
+      </fieldset>
+
+      <fieldset>
+        <label class="l" for="body">Letter text</label>
+        <textarea id="body" rows="14"></textarea>
+        <p class="hint">Leave a blank line between paragraphs. Put **two asterisks** around words to make them bold. A line with only [EVENT] shows the event details box in that spot.</p>
+        <div class="fileline"><button type="button" class="btn sec" id="addEvent" style="padding:10px 16px;font-size:14px">Insert event details</button></div>
+        <p class="warn" id="limitMsg" hidden></p>
+      </fieldset>
+
+      <fieldset id="evset">
+        <legend>Event details box</legend>
+        <div class="row2">
+          <div><label class="l" for="e_event">Event</label><input type="text" id="e_event"></div>
+          <div><label class="l" for="e_date">Date</label><input type="text" id="e_date"></div>
+          <div><label class="l" for="e_time">Time</label><input type="text" id="e_time"></div>
+          <div><label class="l" for="e_venue">Venue</label><input type="text" id="e_venue"></div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <label class="l" for="closing">Closing</label>
+        <input type="text" id="closing">
+        <div class="row2">
+          <div><label class="l" for="sname">Name</label><input type="text" id="sname"></div>
+          <div><label class="l" for="srole">Title</label><input type="text" id="srole"></div>
+        </div>
+        <label class="l" for="sorg">Organisation</label>
+        <input type="text" id="sorg">
+      </fieldset>
+
+      <fieldset>
+        <legend>Signature (optional)</legend>
+        <div class="fileline"><input type="file" id="sig" accept="image/png,image/jpeg"><button type="button" class="btn sec" id="sigClear" style="padding:8px 14px;font-size:14px" hidden>Remove</button></div>
+        <p class="hint">PNG with a transparent background works best. If empty, the space stays free to sign by hand.</p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Page</legend>
+        <div class="opts">
+          <label class="opt"><input type="radio" name="paper" value="bone" checked> Bone paper (as in the Figma letters)</label>
+          <label class="opt"><input type="radio" name="paper" value="white"> White paper (best to print)</label>
+        </div>
+      </fieldset>
+    </form>
+
+    <div class="preview">
+      <div class="gauge">
+        <div class="bar" id="bar"><i></i></div>
+        <div class="gtxt" id="gtxt">Page 0% full</div>
+      </div>
+      <div class="sheet"><canvas id="cv" aria-label="Letter preview"></canvas></div>
+      <div class="actions">
+        <button class="btn" id="dl" type="button">Download PDF (A4)</button>
+        <p class="hint" id="dlHint">Everything is made in your browser. Nothing is uploaded.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="jspdf.umd.min.js"></script>
+<script>
+"use strict";
+// ---------- page geometry (mm). Same grid as the Figma letters: 840 x 1188 px = 210 x 297 mm ----------
+const PAGE_W = 210, PAGE_H = 297, MX = 16, CW = PAGE_W - 2 * MX;
+const BOTTOM = 281;            // last usable line (mm)
+const PX = 4;                  // preview pixels per mm (840 px wide, DPR applied on top)
+const PT = 25.4 / 72;          // 1 pt in mm
+const SZ = 9.4, LH = 4.9, PGAP = 2.6;   // body size (pt), line height (mm), paragraph gap (mm)
+const COBALT = "#005EFF", INK = "#0A0C14", BONE = "#FCFFED";
+const EV_LABEL_W = 30;
+
+const EVENT_NAME = "SEA ESPORTS GAMES & FESTIVAL: UNION® — Official Press Conference";
+const INAUG = "The inaugural edition of SEA ESPORTS GAMES & FESTIVAL: UNION®, scheduled to take place in Thailand in 2028, ";
+const IN_A = INAUG + "represents a significant regional initiative bringing together national esports teams from all 11 Southeast Asian nations for a flagship esports championship, complemented by a fully gamified entertainment festival celebrating gaming, technology, creativity and culture.";
+const PRESS_A = "The press conference will bring together senior representatives from regional and national esports federations, government stakeholders, industry partners and members of the regional media for the official unveiling of this initiative.";
+const SUBJ_END = " AT THE SEA ESPORTS GAMES & FESTIVAL: UNION® PRESS CONFERENCE";
+const J = a => a.join("\n\n");
+
+const PRESETS = [
+  { id: "blank", name: "Blank letter", logos: "both", addr: "", subject: "", sal: "Dear …,", body: "", closing: "Yours sincerely,", sname: "Charina Widjaja", ev: false },
+  { id: "minister", name: "Minister of Tourism and Sports", logos: "both",
+    addr: "His Excellency Mr. Surasak Phancharoenworakul\nMinister of Tourism and Sports\nMinistry of Tourism and Sports\nKingdom of Thailand",
+    subject: "Subject: OFFICIAL INVITATION TO HIS EXCELLENCY AS GUEST OF HONOUR" + SUBJ_END, sal: "Your Excellency,", closing: "Yours respectfully,", sname: "Charina Widjaja", ev: true,
+    body: J([
+      "On behalf of PLAY UNION, it is our distinct honour to formally invite Your Excellency to grace the official press conference announcing SEA ESPORTS GAMES & FESTIVAL: UNION®, to be held on 26 November 2026 at Cloud 11, Bangkok, Thailand.",
+      IN_A,
+      "With Thailand serving as the host nation for this inaugural edition, the initiative presents an opportunity to further strengthen the country’s position as a regional destination for international sporting events, digital entertainment and youth engagement, while fostering greater collaboration across Southeast Asia.",
+      "In recognition of Thailand’s important role in hosting this regional initiative, **we would be deeply honoured by Your Excellency’s presence as Guest of Honour and the opportunity for Your Excellency to deliver an address** at the press conference.",
+      "The event details are as follows:", "[EVENT]", PRESS_A,
+      "We sincerely hope that Your Excellency will be able to honour us with your presence on this significant occasion. Our organising team would be pleased to coordinate with your office on the necessary protocol, programme and logistical arrangements.",
+      "Please accept, Your Excellency, the assurances of our highest consideration and respect."]) },
+  { id: "governor", name: "Governor, Sports Authority of Thailand", logos: "both",
+    addr: "Mrs. Proadpran Samarnmit\nGovernor\nSports Authority of Thailand\nKingdom of Thailand",
+    subject: "Subject: OFFICIAL INVITATION AS GUEST OF HONOUR" + SUBJ_END, sal: "Dear Governor,", closing: "Yours sincerely,", sname: "Charina Widjaja", ev: true,
+    body: J([
+      "On behalf of PLAY UNION, it is our distinct honour to formally invite Your Excellency to grace the official press conference announcing SEA ESPORTS GAMES & FESTIVAL: UNION®, to be held on 26 November 2026 at Cloud 11, Bangkok, Thailand.",
+      INAUG + "will bring together national esports teams from all 11 Southeast Asian nations for a flagship regional championship, alongside a fully gamified entertainment festival connecting esports, gaming culture, technology and communities.",
+      "As the host nation, Thailand will play an important role in bringing this regional vision to life. The initiative seeks to advance competitive esports, create opportunities for emerging talent and strengthen regional collaboration, while highlighting Thailand’s capabilities as a destination for major international sporting and entertainment events.",
+      "Given the Sports Authority of Thailand’s important role in supporting and developing the country’s sporting ecosystem, **we would be deeply honoured by your presence as Guest of Honour and would be privileged to invite you to deliver an address** at the press conference.",
+      "The event details are as follows:", "[EVENT]",
+      "The press conference will be attended by senior representatives from regional and national esports federations, government stakeholders, industry partners and members of the regional media, marking the official unveiling of this landmark initiative.",
+      "We sincerely hope you will be able to join us for this important occasion. Our organising team would be pleased to liaise with your office regarding protocol, programme arrangements and any necessary coordination.",
+      "Thank you for your kind consideration. We look forward to the honour of welcoming you to the press conference."]) },
+  { id: "aesf", name: "President, Asian Electronic Sports Federation", logos: "both",
+    addr: "Mr. Santi Lothong\nPresident\nAsian Electronic Sports Federation (AESF)",
+    subject: "Subject: OFFICIAL INVITATION TO GRACE AND DELIVER AN ADDRESS" + SUBJ_END, sal: "Dear President Santi,", closing: "Yours sincerely,", sname: "Charina Widjaja", ev: true,
+    body: J([
+      "On behalf of PLAY UNION, it is our great pleasure to formally invite you to grace the official press conference announcing SEA ESPORTS GAMES & FESTIVAL: UNION®, taking place in Bangkok, Thailand, on 26 November 2026.",
+      IN_A,
+      "As we prepare to introduce this initiative to the region, we recognise the important role of the Asian Electronic Sports Federation in advancing esports development, strengthening international collaboration and creating opportunities for athletes and the wider esports community.",
+      "In recognition of your leadership and contributions to the esports ecosystem, **we would be honoured to welcome you as a distinguished guest and formally invite you to deliver an address** at the press conference, sharing your perspectives on the continued growth of esports and the significance of regional collaboration.",
+      "The event details are as follows:", "[EVENT]", PRESS_A,
+      "We sincerely hope you will be able to join us for this important occasion and contribute to the beginning of an exciting new chapter for Southeast Asian esports.",
+      "We look forward to the honour of welcoming you to the press conference."]) },
+  { id: "tef", name: "President, Thailand Esports Federation", logos: "pu",
+    addr: "Mr. Santi Lothong\nPresident\nThailand Esports Federation",
+    subject: "Subject: OFFICIAL INVITATION TO GRACE AND DELIVER AN ADDRESS" + SUBJ_END, sal: "Dear President Santi,", closing: "Yours sincerely,", sname: "Charina", ev: true,
+    body: J([
+      "On behalf of PLAY UNION, it is our great pleasure to formally invite you to grace the official press conference announcing SEA ESPORTS GAMES & FESTIVAL: UNION®, taking place in Bangkok, Thailand, on 26 November 2026.",
+      IN_A,
+      "As we prepare to introduce this initiative to the region, we recognise the important role of the Thailand Esports Federation in advancing esports development, strengthening international collaboration and creating opportunities for athletes and the wider esports community.",
+      "In recognition of your leadership and contributions to the esports ecosystem, **we would be honoured to welcome you as a distinguished guest and formally invite you to deliver an address** at the press conference, sharing your perspectives on the continued growth of esports and the significance of regional collaboration.",
+      "The event details are as follows:", "[EVENT]", PRESS_A,
+      "We sincerely hope you will be able to join us for this important occasion and contribute to the beginning of an exciting new chapter for Southeast Asian esports.",
+      "I look forward to the pleasure of welcoming you to Bangkok."]) },
+];
+
+// ---------- helpers ----------
+const $ = id => document.getElementById(id);
+const fontCss = (bold, mono, sz) => mono ? `500 ${sz * PT * PX}px JBM` : `${bold ? 700 : 400} ${sz * PT * PX}px SG`;
+const mctx = document.createElement("canvas").getContext("2d");
+function measure(str, bold, mono, sz) {
+  mctx.font = fontCss(bold, mono, sz); mctx.fontKerning = "none";
+  return mctx.measureText(str).width / PX;
+}
+// "text **bold** text" -> words [{t, b}]
+function toWords(s, forceBold) {
+  const out = []; let bold = false;
+  s.split("**").forEach((chunk, i) => {
+    if (i > 0) bold = !bold;
+    chunk.split(/(\s+)/).forEach(w => { if (w && !/^\s+$/.test(w)) out.push({ t: w, b: forceBold || bold }); else if (w) out.push({ sp: true, b: forceBold || bold }); });
+  });
+  return out;
+}
+// wrap a word list to width -> lines of runs [{t,b,x}]
+function wrap(words, width, sz) {
+  const spW = measure(" ", false, false, sz);
+  const lines = []; let line = [], x = 0;
+  const flush = () => { if (line.length) lines.push(line); line = []; x = 0; };
+  for (const w of words) {
+    if (w.sp) { if (line.length) x += spW; continue; }
+    const ww = measure(w.t, w.b, false, sz);
+    if (line.length && x + ww > width + 0.01) flush();
+    // merge into previous run if same style and adjacent
+    const last = line[line.length - 1];
+    if (last && last.b === w.b) { last.t += " " + w.t; }
+    else line.push({ t: w.t, b: w.b, x: x });
+    x += ww;
+  }
+  flush();
+  // recompute run x positions (needed after merging)
+  for (const ln of lines) {
+    let cx = 0;
+    ln.forEach((r, i) => { r.x = cx; cx += measure(r.t, r.b, false, sz) + (i < ln.length - 1 ? spW : 0); });
+  }
+  return lines;
+}
+
+// ---------- layout: produce drawing ops + bottom ----------
+function layout(s, imgs) {
+  const ops = []; let y = 0;
+  const logos = s.logos;
+  if (logos === "both" || logos === "se") ops.push({ k: "img", img: "se", x: MX, y: 14, w: 59, h: 17.6 });
+  if (logos === "both" || logos === "pu") ops.push({ k: "img", img: "pu", x: PAGE_W - MX - 47.5, y: 18.5, w: 47.5, h: 8.75 });
+  y = 43;
+  const text = (str, bold, opts = {}) => {
+    const sz = opts.sz || SZ, w = opts.w || CW, x0 = opts.x || MX;
+    const lines = wrap(toWords(str, bold), w, sz);
+    for (const ln of lines) { y += LH; for (const r of ln) ops.push({ k: "t", t: r.t, x: x0 + r.x, y: y - 1.2, b: r.b, sz, c: INK }); }
+  };
+  const gap = (g = PGAP) => { y += g; };
+  const blockLines = str => str.split("\n").map(t => t.trim()).filter(Boolean);
+
+  if (s.date.trim()) { text(s.date.trim(), true); gap(); }
+  const al = blockLines(s.addr);
+  al.forEach((l, i) => text(l, i === 0));
+  if (al.length) gap();
+  if (s.subject.trim()) { text(s.subject.trim().replace(/\s+/g, " "), true); gap(); }
+  if (s.sal.trim()) { text(s.sal.trim(), false); gap(); }
+
+  const paras = s.body.replace(/\r/g, "").split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  for (const p of paras) {
+    if (p === "[EVENT]") {
+      const rows = [["EVENT", s.eEvent], ["DATE", s.eDate], ["TIME", s.eTime], ["VENUE", s.eVenue]].filter(r => r[1].trim());
+      const top = y + 0.5; y += 4.2;
+      ops.push({ k: "t", t: "EVENT DETAILS", x: MX + 4, y: y + 0.4, mono: true, sz: 6.4, c: COBALT, b: false });
+      y += 4.4;
+      for (const [lab, val] of rows) {
+        const lines = wrap(toWords(val, false), CW - 4 - EV_LABEL_W, SZ);
+        const base = y;
+        ops.push({ k: "t", t: lab, x: MX + 4, y: base + LH - 1.5, mono: true, sz: 6.4, c: "#565C6E", b: false });
+        for (const ln of lines) { y += LH; for (const r of ln) ops.push({ k: "t", t: r.t, x: MX + 4 + EV_LABEL_W + r.x, y: y - 1.2, b: r.b, sz: SZ, c: INK }); }
+        y += 1.3;
+      }
+      y += 1.6;
+      ops.push({ k: "rect", x: MX, y: top, w: 0.6, h: y - top, c: COBALT });
+      gap(); continue;
+    }
+    text(p, false); gap();
+  }
+  if (s.closing.trim()) { text(s.closing.trim(), false); }
+  // signature space
+  const sigTop = y + 2, sigH = 15;
+  if (imgs.sig) {
+    const r = imgs.sig.naturalWidth / imgs.sig.naturalHeight; let h = sigH, w = h * r; if (w > 55) { w = 55; h = w / r; }
+    ops.push({ k: "img", img: "sig", x: MX, y: sigTop + (sigH - h) / 2, w, h });
+  }
+  y = sigTop + sigH + 1;
+  if (s.sname.trim()) text(s.sname.trim(), true);
+  if (s.srole.trim()) text(s.srole.trim(), false);
+  if (s.sorg.trim()) text(s.sorg.trim(), false);
+  return { ops, bottom: y };
+}
+
+// ---------- state ----------
+const imgs = { se: null, pu: null, sig: null };
+const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
+function state() {
+  return {
+    logos: document.querySelector('input[name=logos]:checked').value,
+    paper: document.querySelector('input[name=paper]:checked').value,
+    date: $("date").value, addr: $("addr").value, subject: $("subject").value, sal: $("sal").value, body: $("body").value,
+    eEvent: $("e_event").value, eDate: $("e_date").value, eTime: $("e_time").value, eVenue: $("e_venue").value,
+    closing: $("closing").value, sname: $("sname").value, srole: $("srole").value, sorg: $("sorg").value,
+  };
+}
+let lastGood = null;
+const cv = $("cv"), ctx = cv.getContext("2d");
+function draw(res, s) {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2.5), k = PX * dpr;
+  cv.width = Math.round(PAGE_W * k); cv.height = Math.round(PAGE_H * k);
+  ctx.setTransform(k / PX, 0, 0, k / PX, 0, 0);   // 1 unit = 1 preview px
+  ctx.fillStyle = s.paper === "white" ? "#FFFFFF" : BONE; ctx.fillRect(0, 0, PAGE_W * PX, PAGE_H * PX);
+  ctx.fillStyle = COBALT; ctx.fillRect(0, 0, PAGE_W * PX, 2 * PX);
+  ctx.textBaseline = "alphabetic"; ctx.fontKerning = "none";
+  for (const o of res.ops) {
+    if (o.k === "t") { ctx.font = fontCss(o.b, o.mono, o.sz); ctx.fillStyle = o.c; if (o.mono) ctx.letterSpacing = (o.sz * PT * PX * 0.12) + "px"; else ctx.letterSpacing = "0px"; ctx.fillText(o.t, o.x * PX, o.y * PX); }
+    else if (o.k === "rect") { ctx.fillStyle = o.c; ctx.fillRect(o.x * PX, o.y * PX, o.w * PX, o.h * PX); }
+    else if (o.k === "img" && imgs[o.img]) ctx.drawImage(imgs[o.img], o.x * PX, o.y * PX, o.w * PX, o.h * PX);
+  }
+  // limit line (visible when close)
+  const pct = Math.min(999, Math.round((res.bottom - 43) / (BOTTOM - 43) * 100));
+  const over = res.bottom > BOTTOM;
+  $("bar").classList.toggle("full", over);
+  $("bar").firstElementChild.style.width = Math.min(100, pct) + "%";
+  const g = $("gtxt");
+  g.classList.toggle("bad", over);
+  g.textContent = over ? `Too long: over by about ${Math.ceil((res.bottom - BOTTOM) / LH)} line(s). Shorten the text to fit one A4 page.` : `Page ${pct}% full · about ${Math.max(0, Math.floor((BOTTOM - res.bottom) / LH))} line(s) left`;
+  $("dl").disabled = over;
+}
+let raf = 0;
+function update(fromBody) {
+  const s = state(), res = layout(s, imgs);
+  if (fromBody && res.bottom > BOTTOM && lastGood) {
+    // hard limit: refuse typing/pasting that does not fit on the page
+    $("body").value = lastGood.body; const m = $("limitMsg");
+    m.hidden = false; m.textContent = "Limit reached: that text does not fit on one A4 page, so it was not added.";
+    clearTimeout(update.t); update.t = setTimeout(() => m.hidden = true, 4000);
+    const s2 = state(); draw(layout(s2, imgs), s2); return;
+  }
+  lastGood = s; draw(res, s);
+}
+function schedule(fromBody) { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => update(fromBody)); }
+
+function applyPreset(p) {
+  document.querySelector(`input[name=logos][value=${p.logos}]`).checked = true;
+  $("addr").value = p.addr; $("subject").value = p.subject; $("sal").value = p.sal;
+  $("closing").value = p.closing; $("sname").value = p.sname; $("srole").value = "Chief Brand & Partnerships Officer"; $("sorg").value = "PLAY UNION";
+  $("e_event").value = EVENT_NAME; $("e_date").value = "Thursday, 26 November 2026"; $("e_time").value = "11:00 AM onwards"; $("e_venue").value = "Cloud 11, Bangkok, Thailand";
+  $("body").value = p.body; lastGood = null;
+  const s = state(); draw(layout(s, imgs), s); lastGood = s;
+}
+
+// ---------- PDF ----------
+const b64 = buf => { let s = "", u = new Uint8Array(buf); for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+let fontData = null;
+async function loadFonts() {
+  if (fontData) return fontData;
+  const get = async n => b64(await (await fetch("fonts/" + n + ".ttf")).arrayBuffer());
+  fontData = { reg: await get("SpecialGothic-Regular"), bold: await get("SpecialGothic-Bold"), mono: await get("JetBrainsMono-Medium") };
+  return fontData;
+}
+const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+async function makePdf() {
+  const s = state(), res = layout(s, imgs);
+  if (res.bottom > BOTTOM) throw new Error("too long");
+  const fd = await loadFonts();
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
+  doc.addFileToVFS("SG-R.ttf", fd.reg); doc.addFont("SG-R.ttf", "SG", "normal", undefined, "Identity-H");
+  doc.addFileToVFS("SG-B.ttf", fd.bold); doc.addFont("SG-B.ttf", "SG", "bold", undefined, "Identity-H");
+  doc.addFileToVFS("JBM.ttf", fd.mono); doc.addFont("JBM.ttf", "JBM", "normal", undefined, "Identity-H");
+  if (s.paper !== "white") { doc.setFillColor(...hex(BONE)); doc.rect(0, 0, PAGE_W, PAGE_H, "F"); }
+  doc.setFillColor(...hex(COBALT)); doc.rect(0, 0, PAGE_W, 2, "F");
+  for (const o of res.ops) {
+    if (o.k === "t") {
+      if (o.mono) { doc.setFont("JBM", "normal"); doc.setCharSpace(o.sz * PT * 0.12); } else { doc.setFont("SG", o.b ? "bold" : "normal"); doc.setCharSpace(0); }
+      doc.setFontSize(o.sz); doc.setTextColor(...hex(o.c)); doc.text(o.t, o.x, o.y);
+    } else if (o.k === "rect") { doc.setFillColor(...hex(o.c)); doc.rect(o.x, o.y, o.w, o.h, "F"); }
+    else if (o.k === "img" && imgs[o.img]) {
+      const i = imgs[o.img], c = document.createElement("canvas"); c.width = i.naturalWidth; c.height = i.naturalHeight;
+      c.getContext("2d").drawImage(i, 0, 0);
+      doc.addImage(c.toDataURL(o.img === "sig" ? "image/png" : "image/png"), "PNG", o.x, o.y, o.w, o.h, undefined, "FAST");
+    }
+  }
+  doc.setProperties({ title: (s.subject || "Letter").replace(/^Subject:\s*/i, "").slice(0, 120), author: "PLAY UNION" });
+  return { doc, s };
+}
+function fileName(s) {
+  const first = (s.addr.split("\n").map(t => t.trim()).filter(Boolean)[0] || "letter").replace(/^(His Excellency|Mr\.|Mrs\.|Ms\.|Dr\.)\s+/i, "");
+  const slug = first.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 40) || "letter";
+  return "UNION_letter_" + slug + ".pdf";
+}
+$("dl").addEventListener("click", async () => {
+  const b = $("dl"), old = b.textContent; b.disabled = true; b.textContent = "Making PDF…";
+  try { const { doc, s } = await makePdf(); doc.save(fileName(s)); }
+  catch (e) { $("dlHint").textContent = "The PDF could not be made: " + e.message; }
+  b.textContent = old; update(false);
+});
+
+// ---------- wire up ----------
+(function init() {
+  const sel = $("preset"); PRESETS.forEach((p, i) => { const o = document.createElement("option"); o.value = i; o.textContent = p.name; sel.appendChild(o); });
+  const d = new Date(); $("date").value = d.getDate() + " " + d.toLocaleString("en-GB", { month: "long" }) + " " + d.getFullYear();
+  sel.addEventListener("change", () => { applyPreset(PRESETS[+sel.value]); });
+  ["date","addr","subject","sal","e_event","e_date","e_time","e_venue","closing","sname","srole","sorg"].forEach(id => $(id).addEventListener("input", () => schedule(false)));
+  $("body").addEventListener("input", () => schedule(true));
+  document.querySelectorAll("input[type=radio]").forEach(r => r.addEventListener("change", () => schedule(false)));
+  $("addEvent").addEventListener("click", () => { const b = $("body"); if (/^\[EVENT\]$/m.test(b.value)) return; b.value = (b.value.trim() ? b.value.trim() + "\n\n" : "") + "[EVENT]"; schedule(true); });
+  $("sig").addEventListener("change", async e => {
+    const f = e.target.files[0]; if (!f) return;
+    const img = await loadImg(URL.createObjectURL(f)); imgs.sig = img; $("sigClear").hidden = !img; schedule(false);
+  });
+  $("sigClear").addEventListener("click", () => { imgs.sig = null; $("sig").value = ""; $("sigClear").hidden = true; schedule(false); });
+  Promise.all([loadImg("logos/seaef.png"), loadImg("logos/playunion.png"), document.fonts.load("400 16px SG"), document.fonts.load("700 16px SG"), document.fonts.load("500 16px JBM")]).then(([se, pu]) => {
+    imgs.se = se; imgs.pu = pu; applyPreset(PRESETS[3]); $("preset").value = 3;
+  });
+})();
+</script>
+</body>
+</html>

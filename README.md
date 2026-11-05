@@ -8,6 +8,7 @@ Sitio estático (HTML puro, sin build en el servidor) con las herramientas y arc
 |---|---|
 | `/` | Página de inicio con las herramientas (`index.html`) |
 | `/kol/` | **KOL Invite Maker**: escribes el nombre del invitado y descarga/comparte la invitación 1080×1350 con su nombre. Una sola página con la fuente y el fondo incrustados |
+| `/letter/` | **Letterhead Maker**: carta oficial en A4 con los logos que elijas (SEAEF + PLAY UNION, solo uno), plantillas de las 4 invitaciones oficiales, límite de texto (no deja pasar de una página) y PDF con texto seleccionable y fuentes incrustadas. Todo en el navegador (`jspdf.umd.min.js` incluido, sin CDN) |
 | `assets/fonts/` | Special Gothic Condensed One (licencia OFL incluida) para el título de la página de inicio |
 | `source/` | Lo necesario para regenerar `/kol/` (plantilla, fondo exportado de Figma, fuentes, `build.py`) |
 | `vercel.json`, `robots.txt` | Ajustes: no indexar en buscadores, cabeceras básicas |
