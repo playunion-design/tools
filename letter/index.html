@@ -64,6 +64,10 @@ canvas { display:block; width:100%; height:auto; box-shadow:0 6px 24px rgba(0,0,
 .actions { display:grid; gap:10px; }
 .fileline { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
 .fileline input[type=file] { font-size:14px; max-width:100%; }
+.seg { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.seg .opt { justify-content:center; font-weight:600; }
+.signer { display:grid; gap:8px; padding:12px; border:2px solid var(--line); border-radius:18px; min-width:0; }
+.slab { font:500 11px/1.2 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0; }
 </style>
 </head>
 <body>
@@ -130,18 +134,21 @@ canvas { display:block; width:100%; height:auto; box-shadow:0 6px 24px rgba(0,0,
       <fieldset>
         <label class="l" for="closing">Closing</label>
         <input type="text" id="closing">
-        <div class="row2">
-          <div><label class="l" for="sname">Name</label><input type="text" id="sname"></div>
-          <div><label class="l" for="srole">Title</label><input type="text" id="srole"></div>
-        </div>
-        <label class="l" for="sorg">Organisation</label>
-        <input type="text" id="sorg">
       </fieldset>
 
       <fieldset>
-        <legend>Signature (optional)</legend>
-        <div class="fileline"><input type="file" id="sig" accept="image/png,image/jpeg"><button type="button" class="btn sec" id="sigClear" style="padding:8px 14px;font-size:14px" hidden>Remove</button></div>
-        <p class="hint">PNG with a transparent background works best. If empty, the space stays free to sign by hand.</p>
+        <legend>Signatures</legend>
+        <div class="seg" role="radiogroup" aria-label="Number of signatures">
+          <label class="opt"><input type="radio" name="nsig" value="0"> 0</label>
+          <label class="opt"><input type="radio" name="nsig" value="1" checked> 1</label>
+          <label class="opt"><input type="radio" name="nsig" value="2"> 2</label>
+          <label class="opt"><input type="radio" name="nsig" value="3"> 3</label>
+        </div>
+        <p class="hint">How many people sign the letter: 1 = left, 2 = left and right, 3 = three columns. 0 = no signature block.</p>
+        <div class="signer" data-i="0"><p class="slab">Signature 1</p><div class="row2"><div><label class="l" for="sname0">Name</label><input type="text" id="sname0"></div><div><label class="l" for="srole0">Title</label><input type="text" id="srole0"></div></div><label class="l" for="sorg0">Organisation</label><input type="text" id="sorg0"><div class="fileline"><input type="file" id="sig0" accept="image/png,image/jpeg" aria-label="Signature image 1 (optional)"><button type="button" class="btn sec" id="sigClear0" style="padding:8px 14px;font-size:14px" hidden>Remove</button></div></div>
+        <div class="signer" data-i="1"><p class="slab">Signature 2</p><div class="row2"><div><label class="l" for="sname1">Name</label><input type="text" id="sname1"></div><div><label class="l" for="srole1">Title</label><input type="text" id="srole1"></div></div><label class="l" for="sorg1">Organisation</label><input type="text" id="sorg1"><div class="fileline"><input type="file" id="sig1" accept="image/png,image/jpeg" aria-label="Signature image 2 (optional)"><button type="button" class="btn sec" id="sigClear1" style="padding:8px 14px;font-size:14px" hidden>Remove</button></div></div>
+        <div class="signer" data-i="2"><p class="slab">Signature 3</p><div class="row2"><div><label class="l" for="sname2">Name</label><input type="text" id="sname2"></div><div><label class="l" for="srole2">Title</label><input type="text" id="srole2"></div></div><label class="l" for="sorg2">Organisation</label><input type="text" id="sorg2"><div class="fileline"><input type="file" id="sig2" accept="image/png,image/jpeg" aria-label="Signature image 3 (optional)"><button type="button" class="btn sec" id="sigClear2" style="padding:8px 14px;font-size:14px" hidden>Remove</button></div></div>
+        <p class="hint" id="sighint">The signature image is optional (PNG with a transparent background works best). If empty, the space stays free to sign by hand.</p>
       </fieldset>
 
       <fieldset>
@@ -233,7 +240,27 @@ const PRESETS = [
       "The event details are as follows:", "[EVENT]", PRESS_A,
       "We sincerely hope you will be able to join us for this important occasion and contribute to the beginning of an exciting new chapter for Southeast Asian esports.",
       "I look forward to the pleasure of welcoming you to Bangkok."]) },
+  { id: "media", name: "Media invitation (SEAEF + PLAY UNION)", logos: "both",
+    addr: "", subject: "OFFICIAL INVITATION TO THE SEAEF – PLAY UNION 2028 PRESS CONFERENCE", sal: "Dear …,", closing: "Yours sincerely,", ev: true,
+    event: { event: "", date: "Thursday, 26 November 2026", time: "11:00 AM (Bangkok time, UTC+7)", venue: "Cloud 11, Bangkok, Thailand" },
+    signers: [ { name: "Do Viet Hung", role: "President", org: "Southeast Asian Esports Federation (SEAEF)" }, { name: "Charina Widjaja", role: "Chief Brand & Partnerships Officer", org: "PLAY UNION" } ],
+    body: J([
+      "On behalf of the Southeast Asian Esports Federation (SEAEF), we are pleased to invite you to the official unveiling of SEA ESPORTS GAMES & FESTIVAL: UNION®, Southeast Asia’s first fully gamified esports and entertainment festival, at a press conference in Bangkok, Thailand.",
+      "Owned by SEAEF and developed in collaboration with its business partner PLAY UNION, the initiative will bring together a flagship esports championship featuring national teams from all 11 Southeast Asian countries, alongside an interactive festival celebrating gaming, music, creators, technology and culture.",
+      "The press conference will introduce the vision for the inaugural 2028 event, including UNION®’s integrated digital platform, designed to extend participation and community engagement beyond the physical festival.",
+      "[EVENT]",
+      "For invited media representatives, PLAY UNION will cover return flights and one night’s hotel accommodation, with arrival in Bangkok on 25 November and departure on 26 November, following the press conference. Travel arrangements will be coordinated upon confirmation of attendance.",
+      "Media interview opportunities with federation representatives and event organisers may also be arranged, subject to availability.",
+      "We would greatly appreciate receiving your RSVP by [RSVP date]. Please confirm your attendance by emailing the PLAY UNION Press Team at press@playunion.com, including your full name, media outlet, designation and contact details, to facilitate attendance and travel arrangements.",
+      "We would be honoured by your presence and look forward to welcoming you to this special occasion."]) },
 ];
+
+function syncSigners() {
+  const n = +document.querySelector("input[name=nsig]:checked").value;
+  const names = [["Signature 1"], ["Signature 1 · left", "Signature 2 · right"], ["Signature 1 · left", "Signature 2 · centre", "Signature 3 · right"]][Math.max(n - 1, 0)];
+  document.querySelectorAll(".signer").forEach((el, i) => { el.hidden = i >= n; if (names[i]) el.querySelector(".slab").textContent = names[i]; });
+  document.getElementById("sighint").hidden = n === 0;
+}
 
 // ---------- helpers ----------
 const $ = id => document.getElementById(id);
@@ -319,21 +346,30 @@ function layout(s, imgs) {
     text(p, false); gap();
   }
   if (s.closing.trim()) { text(s.closing.trim(), false); }
-  // signature space
-  const sigTop = y + 2, sigH = 15;
-  if (imgs.sig) {
-    const r = imgs.sig.naturalWidth / imgs.sig.naturalHeight; let h = sigH, w = h * r; if (w > 55) { w = 55; h = w / r; }
-    ops.push({ k: "img", img: "sig", x: MX, y: sigTop + (sigH - h) / 2, w, h });
+  // signatures: 0-3 columns on one row (1 = left, 2 = left + right, 3 = three columns)
+  const sg = s.signers.slice(0, s.nsig);
+  if (sg.length) {
+    const sigTop = y + 2, sigH = 15, colW = CW / sg.length, tw = colW - (sg.length > 1 ? 4 : 0);
+    let bottom = sigTop + sigH + 1;
+    sg.forEach((p, i) => {
+      const x0 = MX + i * colW; y = sigTop + sigH + 1;
+      const im = imgs["sig" + i];
+      if (im) {
+        const r = im.naturalWidth / im.naturalHeight; let h = sigH, w = h * r; const mw = Math.min(55, tw); if (w > mw) { w = mw; h = w / r; }
+        ops.push({ k: "img", img: "sig" + i, x: x0, y: sigTop + (sigH - h) / 2, w, h });
+      }
+      if (p.name.trim()) text(p.name.trim(), true, { x: x0, w: tw });
+      if (p.role.trim()) text(p.role.trim(), false, { x: x0, w: tw });
+      if (p.org.trim()) text(p.org.trim(), false, { x: x0, w: tw });
+      bottom = Math.max(bottom, y);
+    });
+    y = bottom;
   }
-  y = sigTop + sigH + 1;
-  if (s.sname.trim()) text(s.sname.trim(), true);
-  if (s.srole.trim()) text(s.srole.trim(), false);
-  if (s.sorg.trim()) text(s.sorg.trim(), false);
   return { ops, bottom: y };
 }
 
 // ---------- state ----------
-const imgs = { se: null, pu: null, sig: null };
+const imgs = { se: null, pu: null, sig0: null, sig1: null, sig2: null };
 const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
 function state() {
   return {
@@ -341,7 +377,7 @@ function state() {
     paper: document.querySelector('input[name=paper]:checked').value,
     date: $("date").value, addr: $("addr").value, subject: $("subject").value, sal: $("sal").value, body: $("body").value,
     eEvent: $("e_event").value, eDate: $("e_date").value, eTime: $("e_time").value, eVenue: $("e_venue").value,
-    closing: $("closing").value, sname: $("sname").value, srole: $("srole").value, sorg: $("sorg").value,
+    closing: $("closing").value, nsig: +document.querySelector("input[name=nsig]:checked").value, signers: [0, 1, 2].map(i => ({ name: $("sname" + i).value, role: $("srole" + i).value, org: $("sorg" + i).value })),
   };
 }
 let lastGood = null;
@@ -385,8 +421,11 @@ function schedule(fromBody) { cancelAnimationFrame(raf); raf = requestAnimationF
 function applyPreset(p) {
   document.querySelector(`input[name=logos][value=${p.logos}]`).checked = true;
   $("addr").value = p.addr; $("subject").value = p.subject; $("sal").value = p.sal;
-  $("closing").value = p.closing; $("sname").value = p.sname; $("srole").value = "Chief Brand & Partnerships Officer"; $("sorg").value = "PLAY UNION";
-  $("e_event").value = EVENT_NAME; $("e_date").value = "Thursday, 26 November 2026"; $("e_time").value = "11:00 AM onwards"; $("e_venue").value = "Cloud 11, Bangkok, Thailand";
+  $("closing").value = p.closing;
+  const sg = p.signers || [{ name: p.sname, role: "Chief Brand & Partnerships Officer", org: "PLAY UNION" }];
+  [0, 1, 2].forEach(i => { const q = sg[i] || { name: "", role: "", org: "" }; $("sname" + i).value = q.name; $("srole" + i).value = q.role; $("sorg" + i).value = q.org; });
+  document.querySelector('input[name=nsig][value="' + sg.length + '"]').checked = true; syncSigners();
+  const E = p.event || {}; $("e_event").value = E.event !== undefined ? E.event : EVENT_NAME; $("e_date").value = E.date || "Thursday, 26 November 2026"; $("e_time").value = E.time || "11:00 AM onwards"; $("e_venue").value = E.venue || "Cloud 11, Bangkok, Thailand";
   $("body").value = p.body; lastGood = null;
   const s = state(); draw(layout(s, imgs), s); lastGood = s;
 }
@@ -427,7 +466,7 @@ async function makePdf() {
   return { doc, s };
 }
 function fileName(s) {
-  const first = (s.addr.split("\n").map(t => t.trim()).filter(Boolean)[0] || "letter").replace(/^(His Excellency|Mr\.|Mrs\.|Ms\.|Dr\.)\s+/i, "");
+  const first = (s.addr.split("\n").map(t => t.trim()).filter(Boolean)[0] || s.sal.replace(/^Dear\s+/i, "").replace(/,\s*$/, "").trim() || "letter").replace(/^(His Excellency|Mr\.|Mrs\.|Ms\.|Dr\.)\s+/i, "");
   const slug = first.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 40) || "letter";
   return "UNION_letter_" + slug + ".pdf";
 }
@@ -443,15 +482,18 @@ $("dl").addEventListener("click", async () => {
   const sel = $("preset"); PRESETS.forEach((p, i) => { const o = document.createElement("option"); o.value = i; o.textContent = p.name; sel.appendChild(o); });
   const d = new Date(); $("date").value = d.getDate() + " " + d.toLocaleString("en-GB", { month: "long" }) + " " + d.getFullYear();
   sel.addEventListener("change", () => { applyPreset(PRESETS[+sel.value]); });
-  ["date","addr","subject","sal","e_event","e_date","e_time","e_venue","closing","sname","srole","sorg"].forEach(id => $(id).addEventListener("input", () => schedule(false)));
+  ["date","addr","subject","sal","e_event","e_date","e_time","e_venue","closing","sname0","srole0","sorg0","sname1","srole1","sorg1","sname2","srole2","sorg2"].forEach(id => $(id).addEventListener("input", () => schedule(false)));
   $("body").addEventListener("input", () => schedule(true));
   document.querySelectorAll("input[type=radio]").forEach(r => r.addEventListener("change", () => schedule(false)));
   $("addEvent").addEventListener("click", () => { const b = $("body"); if (/^\[EVENT\]$/m.test(b.value)) return; b.value = (b.value.trim() ? b.value.trim() + "\n\n" : "") + "[EVENT]"; schedule(true); });
-  $("sig").addEventListener("change", async e => {
-    const f = e.target.files[0]; if (!f) return;
-    const img = await loadImg(URL.createObjectURL(f)); imgs.sig = img; $("sigClear").hidden = !img; schedule(false);
+  [0, 1, 2].forEach(i => {
+    $("sig" + i).addEventListener("change", async e => {
+      const f = e.target.files[0]; if (!f) return;
+      const img = await loadImg(URL.createObjectURL(f)); imgs["sig" + i] = img; $("sigClear" + i).hidden = !img; schedule(false);
+    });
+    $("sigClear" + i).addEventListener("click", () => { imgs["sig" + i] = null; $("sig" + i).value = ""; $("sigClear" + i).hidden = true; schedule(false); });
   });
-  $("sigClear").addEventListener("click", () => { imgs.sig = null; $("sig").value = ""; $("sigClear").hidden = true; schedule(false); });
+  document.querySelectorAll("input[name=nsig]").forEach(r => r.addEventListener("change", () => { syncSigners(); schedule(false); }));
   Promise.all([loadImg("logos/seaef.png"), loadImg("logos/playunion.png"), document.fonts.load("400 16px SG"), document.fonts.load("700 16px SG"), document.fonts.load("500 16px JBM")]).then(([se, pu]) => {
     imgs.se = se; imgs.pu = pu; applyPreset(PRESETS[3]); $("preset").value = 3;
   });
