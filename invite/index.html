@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Pick a template, type a guest name and get the UNION press conference invitation as a picture, ready to post.">
+<title>Invite Maker</title>
+</head>
+<body>
+
+<style>
+/* Layout: on a computer the preview sits left and the controls right. On a phone the order is: names, preview, buttons. Palette is the UNION brand: Bone paper, Cobalt for the one action, the pill shape of the PRESS CONFERENCE chip on buttons and fields. */
+@font-face{font-family:'SGCO';font-style:normal;font-weight:400;font-display:block;src:url(/source/fonts/special-gothic-condensed-one-latin-400-normal.woff2) format('woff2');unicode-range:U+0020-007E,U+00A0-00AC,U+00AE-00FF,U+0102,U+0131,U+0152-0153,U+02C6,U+02DA,U+02DC,U+0300-0301,U+0303-0304,U+0308,U+2013-2014,U+2018-201A,U+201C-201E,U+2022,U+2026,U+2039-203A,U+2044,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215;}
+@font-face{font-family:'SGCO';font-style:normal;font-weight:400;font-display:block;src:url(/source/fonts/special-gothic-condensed-one-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-0101,U+0103-0130,U+0132-0148,U+014A-0151,U+0154-0161,U+0164-017E,U+0192,U+01FC-01FF,U+0218-021B,U+0237,U+02C7,U+02DD,U+1E80-1E85,U+1E9E,U+1EF2-1EF3,U+2020,U+20A3,U+20A6-20A7,U+20A9-20AB,U+20AD,U+20B1,U+20B4,U+20B8-20BA,U+20BD,U+20BF;}
+:root {
+  --bg: #FCFFED;
+  --surface: #F2F5E1;
+  --ink: #0A0C14;
+  --muted: #565C6E;
+  --line: #CFD4BC;
+  --accent: #005EFF;
+  --accent-ink: #FCFFED;
+  --warn: #A24A00;
+  --display: "SGCO", "Roboto Condensed", "Arial Narrow", Arial, sans-serif;
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #070A12; --surface: #101624; --ink: #FCFFED; --muted: #A0A8BD; --line: #263049;
+    --accent: #5C95FF; --accent-ink: #050B1A; --warn: #FFB067; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #070A12; --surface: #101624; --ink: #FCFFED; --muted: #A0A8BD; --line: #263049;
+  --accent: #5C95FF; --accent-ink: #050B1A; --warn: #FFB067; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 16px/1.5 var(--body);
+  padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1040px; margin: 0 auto; }
+.back { display: inline-block; margin-bottom: 22px; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); text-decoration: none; padding: 6px 0; }
+.back:hover { color: var(--accent); }
+.eyebrow { font: 500 12px/1.2 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(46px, 9vw, 84px); line-height: .92; letter-spacing: -.005em; text-transform: uppercase; margin: 14px 0 12px; text-wrap: balance; }
+.lead { color: var(--muted); max-width: 54ch; margin: 0; }
+main {
+  display: grid; margin-top: 32px; align-items: start;
+  grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  grid-template-areas: "preview input" "preview out" "preview .";
+  column-gap: clamp(28px, 5vw, 56px); row-gap: 22px;
+}
+.input { grid-area: input; display: grid; gap: 22px; min-width: 0; }
+.preview { grid-area: preview; min-width: 0; }
+.out { grid-area: out; display: grid; gap: 22px; min-width: 0; }
+@media (max-width: 780px) {
+  body { padding-block: 20px 48px; }
+  main { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; grid-template-areas: "input" "preview" "out"; margin-top: 24px; row-gap: 26px; }
+  .preview { width: 100%; max-width: 380px; margin-inline: auto; }
+  textarea { min-height: 128px; }
+  .actions .btn { flex: 1 1 100%; }
+}
+.preview canvas { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 4 / 5; border-radius: 6px; background: var(--surface); box-shadow: 0 22px 44px -26px rgba(0, 30, 120, .55); }
+.nav { display: flex; align-items: center; gap: 10px; margin-top: 14px; min-width: 0; }
+.nav .count { font: 500 13px/1 var(--mono); letter-spacing: .08em; color: var(--muted); white-space: nowrap; }
+.nav .cur { flex: 1; min-width: 0; text-align: right; font-family: var(--display); font-size: 22px; line-height: 1; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.icon-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--line); background: transparent; color: var(--ink); font-size: 18px; cursor: pointer; flex: none; }
+.icon-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.icon-btn:disabled { opacity: .35; cursor: default; }
+.cap { display: block; font: 500 12px/1.2 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.hint { color: var(--muted); font-size: 14px; margin: 8px 0 0; }
+textarea { width: 100%; min-height: 176px; resize: vertical; padding: 16px 20px; border-radius: 22px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: 500 18px/1.5 var(--body); }
+textarea::placeholder { color: var(--muted); opacity: .8; }
+textarea:focus-visible, select:focus-visible, input:focus-visible, button:focus-visible, .back:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+textarea:focus { border-color: var(--accent); }
+.seg { display: flex; flex-wrap: wrap; gap: 10px; }
+.pill { position: relative; display: inline-flex; }
+.pill input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.pill span { display: inline-flex; align-items: center; min-height: 44px; padding: 0 22px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: 600 15px var(--body); }
+.pill input:checked + span { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+.pill input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+.pill input:disabled + span { opacity: .4; }
+.row { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; }
+.file { display: inline-flex; align-items: center; gap: 10px; }
+.status .fix { margin-left: 6px; padding: 6px 4px; border: 0; background: none; color: var(--accent); font: 600 14px var(--body); text-decoration: underline; cursor: pointer; }
+.check { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; font-size: 15px; }
+.check input { width: 22px; height: 22px; accent-color: var(--accent); }
+select { min-height: 44px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); font: 500 16px var(--body); }
+.status { min-height: 3.4em; margin: 0; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.status.warn { color: var(--warn); }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { min-height: 52px; padding: 0 28px; border-radius: 999px; border: 2px solid var(--accent); background: var(--accent); color: var(--accent-ink); font: 600 16px var(--body); cursor: pointer; }
+.btn.alt { background: transparent; color: var(--accent); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:hover:not(:disabled) { filter: brightness(1.08); }
+.foot { margin: 6px 0 0; font: 400 12px/1.6 var(--mono); letter-spacing: .04em; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { textarea, .btn, .icon-btn { transition: border-color .15s, filter .15s, color .15s; } }
+</style>
+
+<div class="wrap">
+  <a class="back" href="/">&larr; All tools</a>
+  <header>
+    <p class="eyebrow">UNION &middot; Press conference &middot; 26 Nov 2026</p>
+    <h1>Invite Maker</h1>
+    <p class="lead">Pick a template. Type the guest's name. Check the picture. Save it. Each name makes one invitation, 1080 &times; 1350 px.</p>
+  </header>
+
+  <main>
+    <section class="input" aria-label="Guest names">
+      <div>
+        <span class="cap" id="tpl-cap">Template</span>
+        <div class="seg" role="radiogroup" aria-labelledby="tpl-cap">
+          <label class="pill"><input type="radio" name="tpl" value="media" checked><span>Media invite</span></label>
+          <label class="pill"><input type="radio" name="tpl" value="general"><span>General invitation</span></label>
+        </div>
+        <p class="hint" id="tpl-hint">Media invite has the MEDIA INVITE title. General invitation has no title, for everyone else.</p>
+      </div>
+      <div>
+        <label class="cap" for="names">Guest names</label>
+        <textarea id="names" spellcheck="false" autocomplete="off" autocorrect="off" placeholder="Write one name on each line.&#10;Example: Maria Santos&#10;Example: Somchai Prasert"></textarea>
+        <p class="hint">Names turn into capital letters by themselves. Paste a whole list to make many images at once.</p>
+      </div>
+      <div class="row">
+        <label class="check" for="strip"><input type="checkbox" id="strip"> Remove accents (only brand letters)</label>
+        <span class="file">
+          <label class="cap" for="fmt" style="margin:0">File</label>
+          <select id="fmt">
+            <option value="jpg">JPG (smaller)</option>
+            <option value="png">PNG (sharper)</option>
+          </select>
+        </span>
+      </div>
+    </section>
+
+    <section class="preview" aria-label="Preview">
+      <canvas id="cv" width="1080" height="1350" role="img" aria-label="Invitation preview"></canvas>
+      <div class="nav">
+        <button class="icon-btn" id="prev" type="button" aria-label="Previous name" hidden>&larr;</button>
+        <span class="count" id="count" hidden></span>
+        <button class="icon-btn" id="next" type="button" aria-label="Next name" hidden>&rarr;</button>
+        <span class="cur" id="cur"></span>
+      </div>
+    </section>
+
+    <section class="out" aria-label="Save">
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <div class="actions">
+        <button class="btn" id="dl-one" type="button" disabled>Download image</button>
+        <button class="btn alt" id="dl-file" type="button" hidden disabled>Download file instead</button>
+        <button class="btn alt" id="dl-all" type="button" hidden>Download all as ZIP</button>
+      </div>
+      <p class="foot" id="foot"></p>
+    </section>
+  </main>
+</div>
+
+<script>
+const W = 1080, H = 1350;
+// Where the name sits inside the INVITED GUEST panel (measured from the Figma frame).
+let NAME_X = 102.25, NAME_Y = 471, DX = 0, DY = 0;
+const MAX_W = 876, SIZE_MAX = 80, SIZE_MIN = 34;
+const FAMILY = '"SGCO","Roboto Condensed","Arial Narrow",Arial,sans-serif';
+const BG_SRC = "/source/bg.png";
+const COVERED = new Set();
+"32-126,160-172,174-328,330-353,356-382,402,508-511,536-539,567,710-711,730,732-733,768-769,771-772,776,7808-7813,7838,7922-7923,8211-8212,8216-8218,8220-8222,8224,8226,8230,8249-8250,8260,8355,8358-8359,8361-8365,8369,8372,8376-8378,8381,8383,8482,8593,8595,8722,8725".split(",").forEach(function (r) {
+  var p = r.split("-").map(Number), a = p[0], b = p.length > 1 ? p[1] : p[0];
+  for (var c = a; c <= b; c++) COVERED.add(c);
+});
+
+const $ = function (id) { return document.getElementById(id); };
+const cv = $("cv"), ctx = cv.getContext("2d");
+let bg = null, bgGeneral = null, tpl = "media", names = [], idx = 0, token = 0;
+let prepared = { key: "", blob: null };
+
+// On a phone, "Save or share" opens the share menu (Save Image goes to Photos, or pick an app to post).
+var SHARE = false;
+try {
+  var coarse = !!(window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+  var probe = new File([new Blob(["x"], { type: "image/jpeg" })], "probe.jpg", { type: "image/jpeg" });
+  SHARE = coarse && typeof navigator.share === "function" && typeof navigator.canShare === "function" && navigator.canShare({ files: [probe] });
+} catch (e) { SHARE = false; }
+$("foot").textContent = SHARE
+  ? "In the menu choose Save Image to keep it in Photos, or choose an app to post it. Names stay on this device."
+  : "Names stay on this device and are never uploaded.";
+$("dl-file").hidden = !SHARE;
+
+function stripAccents(s) {
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\u0110/g, "D").replace(/\u0111/g, "d").normalize("NFC");
+}
+function parseNames() {
+  var strip = $("strip").checked;
+  return $("names").value.split(/\r?\n/).map(function (l) { return l.replace(/\s+/g, " ").trim(); })
+    .filter(Boolean).slice(0, 300)
+    .map(function (l) { return (strip ? stripAccents(l) : l.normalize("NFC")).toUpperCase(); });
+}
+function missingLetters(text) {
+  var out = [];
+  for (const ch of text) {
+    if (/[\p{L}\p{M}]/u.test(ch) && !COVERED.has(ch.codePointAt(0)) && out.indexOf(ch) < 0) out.push(ch);
+  }
+  return out;
+}
+function slug(name, i) {
+  var s = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_+|_+$/g, "").toUpperCase().slice(0, 40);
+  return s || ("GUEST_" + (i + 1));
+}
+async function fontsFor(text) {
+  try { await Promise.all([document.fonts.load("80px SGCO", "A"), document.fonts.load("80px SGCO", text || "A")]); } catch (e) {}
+}
+function fit(c, text) {
+  var size = SIZE_MAX;
+  c.font = size + "px " + FAMILY;
+  while (size > SIZE_MIN && c.measureText(text).width > MAX_W) { size -= 1; c.font = size + "px " + FAMILY; }
+  var t = text, cut = false;
+  if (c.measureText(t).width > MAX_W) {
+    cut = true;
+    while (t.length > 1 && c.measureText(t + "\u2026").width > MAX_W) t = t.slice(0, -1);
+    t = t.trimEnd() + "\u2026";
+  }
+  return { size: size, text: t, cut: cut };
+}
+function draw(c, text, alpha) {
+  c.clearRect(0, 0, W, H);
+  c.imageSmoothingQuality = "high";
+  c.drawImage(tpl === "general" && bgGeneral ? bgGeneral : bg, 0, 0, W, H);
+  c.fontKerning = "normal";
+  var f = fit(c, text);
+  c.save();
+  c.globalAlpha = alpha;
+  c.fillStyle = "#FCFFED";
+  c.textAlign = "left";
+  c.textBaseline = "alphabetic";
+  c.font = f.size + "px " + FAMILY;
+  c.fillText(f.text, NAME_X + DX, NAME_Y + DY);
+  c.restore();
+  return f;
+}
+
+async function makeBlob(text, fmt) {
+  var c = document.createElement("canvas"); c.width = W; c.height = H;
+  await fontsFor(text);
+  draw(c.getContext("2d"), text, 1);
+  return new Promise(function (res) { c.toBlob(res, fmt === "png" ? "image/png" : "image/jpeg", 0.95); });
+}
+// The share menu must open straight after the tap, so the picture for the name on screen is made ahead of time.
+function prepare(text, ext) {
+  var key = ext + "|" + tpl + "|" + text;
+  if (prepared.key === key) return;
+  prepared = { key: key, blob: null };
+  makeBlob(text, ext).then(function (b) { if (prepared.key === key) prepared.blob = b; }).catch(function () {});
+}
+async function getBlob(text, ext) {
+  var key = ext + "|" + tpl + "|" + text;
+  return prepared.key === key && prepared.blob ? prepared.blob : makeBlob(text, ext);
+}
+function downloadBlob(blob, filename) {
+  var url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+}
+function say(msg) { var st = $("status"); st.textContent = msg; st.classList.remove("warn"); }
+
+async function refresh() {
+  var my = ++token;
+  names = parseNames();
+  if (idx >= names.length) idx = Math.max(0, names.length - 1);
+  var n = names.length, has = n > 0;
+  var text = has ? names[idx] : "NAME SURNAME";
+  await fontsFor(text);
+  if (my !== token || !bg) return;
+  var f = draw(ctx, text, has ? 1 : 0.4);
+
+  $("cur").textContent = has ? names[idx] : "";
+  $("prev").hidden = $("next").hidden = $("count").hidden = n < 2;
+  $("prev").disabled = idx === 0;
+  $("next").disabled = idx >= n - 1;
+  $("count").textContent = (idx + 1) + " of " + n;
+  $("dl-one").disabled = !has;
+  $("dl-file").disabled = !has;
+  $("dl-one").textContent = SHARE ? "Save or share image" : (n > 1 ? "Download this image" : "Download image");
+  $("dl-all").hidden = n < 2;
+  $("dl-all").textContent = "Download all " + n + " as ZIP";
+  if (has && SHARE) prepare(text, $("fmt").value);
+
+  var msg = "", warn = false, miss = [];
+  if (!has) msg = "The picture shows an example. Type a name to begin.";
+  else {
+    miss = missingLetters(text);
+    if (f.cut) { msg = "This name is too long and was cut. Please make it shorter."; warn = true; }
+    else if (f.size < SIZE_MAX) msg = "Long name. The letters were made smaller (" + f.size + " px) to fit.";
+    else msg = "The name fits at full size.";
+    if (miss.length) {
+      msg += " These letters are not in the brand font: " + miss.join(" ") + ". A backup font is used for them.";
+      warn = true;
+    }
+  }
+  var st = $("status"); st.textContent = msg; st.classList.toggle("warn", warn);
+  if (miss.length && !$("strip").checked) {
+    var fix = document.createElement("button");
+    fix.type = "button"; fix.className = "fix"; fix.textContent = "Remove accents";
+    fix.addEventListener("click", function () { $("strip").checked = true; refresh(); });
+    st.appendChild(fix);
+  }
+}
+
+var CRC = (function () { var t = new Uint32Array(256); for (var n = 0; n < 256; n++) { var c = n; for (var k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { var c = 0xFFFFFFFF; for (var i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 255] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function makeZip(files) {
+  var enc = new TextEncoder(), parts = [], central = [], offset = 0, d = new Date();
+  var time = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF;
+  var date = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  files.forEach(function (f) {
+    var nb = enc.encode(f.name), crc = crc32(f.data), size = f.data.length;
+    var lh = new DataView(new ArrayBuffer(30));
+    lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true); lh.setUint16(8, 0, true);
+    lh.setUint16(10, time, true); lh.setUint16(12, date, true); lh.setUint32(14, crc, true); lh.setUint32(18, size, true);
+    lh.setUint32(22, size, true); lh.setUint16(26, nb.length, true); lh.setUint16(28, 0, true);
+    parts.push(new Uint8Array(lh.buffer), nb, f.data);
+    var ch = new DataView(new ArrayBuffer(46));
+    ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true);
+    ch.setUint16(10, 0, true); ch.setUint16(12, time, true); ch.setUint16(14, date, true); ch.setUint32(16, crc, true);
+    ch.setUint32(20, size, true); ch.setUint32(24, size, true); ch.setUint16(28, nb.length, true);
+    ch.setUint32(42, offset, true);
+    central.push(new Uint8Array(ch.buffer), nb);
+    offset += 30 + nb.length + size;
+  });
+  var cd = 0; central.forEach(function (c) { cd += c.length; });
+  var end = new DataView(new ArrayBuffer(22));
+  end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+  end.setUint32(12, cd, true); end.setUint32(16, offset, true);
+  return new Blob(parts.concat(central, [new Uint8Array(end.buffer)]), { type: "application/zip" });
+}
+
+function prefix() { return tpl === "general" ? "UNION_PC_invite_general_" : "UNION_PC_invite_KOL_"; }
+function fileName(i, list, used, ext) {
+  var base = prefix() + slug(list[i], i), name = base + "." + ext, k = 2;
+  while (used[name]) { name = base + "_" + k + "." + ext; k++; }
+  used[name] = true;
+  return name;
+}
+
+// asFile = true skips the share menu and saves a file.
+async function saveOne(btn, asFile) {
+  if (!names.length) return;
+  var ext = $("fmt").value, text = names[idx];
+  btn.disabled = true;
+  try {
+    var blob = await getBlob(text, ext);
+    var fn = fileName(idx, names, {}, ext);
+    if (SHARE && !asFile) {
+      try {
+        await navigator.share({ files: [new File([blob], fn, { type: ext === "png" ? "image/png" : "image/jpeg" })] });
+      } catch (e) {
+        if (e && e.name === "AbortError") { btn.disabled = false; return; }   // the person closed the menu
+        downloadBlob(blob, fn);
+        say("Download started: " + fn);
+      }
+    } else {
+      downloadBlob(blob, fn);
+      say("Download started: " + fn);
+    }
+  } catch (e) {
+    say("The download did not work. Please try again.");
+  }
+  btn.disabled = false;
+}
+$("dl-one").addEventListener("click", function () { saveOne($("dl-one"), false); });
+$("dl-file").addEventListener("click", function () { saveOne($("dl-file"), true); });
+$("dl-all").addEventListener("click", async function () {
+  if (names.length < 2) return;
+  var ext = $("fmt").value, btn = $("dl-all"), used = {}, files = [], list = names.slice();
+  btn.disabled = true;
+  try {
+    for (var i = 0; i < list.length; i++) {
+      say("Making image " + (i + 1) + " of " + list.length + "\u2026");
+      var blob = await makeBlob(list[i], ext);
+      files.push({ name: fileName(i, list, used, ext), data: new Uint8Array(await blob.arrayBuffer()) });
+    }
+    downloadBlob(makeZip(files), prefix() + list.length + "_names.zip");
+    say("Download started: " + list.length + " images in one ZIP file.");
+  } catch (e) {
+    say("The download did not work. Please try again.");
+  }
+  btn.disabled = false;
+});
+$("prev").addEventListener("click", function () { if (idx > 0) { idx--; refresh(); } });
+$("next").addEventListener("click", function () { if (idx < names.length - 1) { idx++; refresh(); } });
+$("names").addEventListener("input", refresh);
+$("strip").addEventListener("change", refresh);
+$("fmt").addEventListener("change", refresh);
+
+// General invitation = the media invite picture without the MEDIA INVITE title, and the PRESS CONFERENCE chip moved to the left margin.
+// There is no second picture file: the clean background under the title and the chip is rebuilt from the picture around it,
+// then the chip is moved. It matches the Figma export within about 1 level of 255.
+function buildGeneral(img) {
+  var X0 = 56, Y0 = 172, RW = 784, RH = 169, DX = -396;
+  var BONE = [252, 255, 237];
+  var cv2 = document.createElement("canvas"); cv2.width = W; cv2.height = H;
+  var c2 = cv2.getContext("2d"); c2.drawImage(img, 0, 0, W, H);
+  var id = c2.getImageData(X0, Y0, RW, RH), d = id.data;
+  function at(x, y, k) { return d[((y - Y0) * RW + (x - X0)) * 4 + k]; }
+  // 1. smooth estimate of the background in the box: a cubic in y for every column, fitted on clean rows above and below
+  var rowsFit = [], y, k, x, i, j;
+  for (y = 172; y <= 206; y++) rowsFit.push(y);
+  for (y = 314; y <= 338; y++) rowsFit.push(y);
+  function vand(yy) { var t = (yy - 260) / 100; return [t * t * t, t * t, t, 1]; }
+  var N = rowsFit.length, A = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
+  rowsFit.forEach(function (yy) { var v = vand(yy); for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) A[i][j] += v[i] * v[j]; });
+  var M = A.map(function (r, i2) { return r.concat([0,1,2,3].map(function (j2) { return i2 === j2 ? 1 : 0; })); });
+  for (i = 0; i < 4; i++) {
+    var p = i; for (j = i + 1; j < 4; j++) if (Math.abs(M[j][i]) > Math.abs(M[p][i])) p = j;
+    var tmp = M[i]; M[i] = M[p]; M[p] = tmp;
+    var pv = M[i][i]; for (j = 0; j < 8; j++) M[i][j] /= pv;
+    for (j = 0; j < 4; j++) if (j !== i) { var f = M[j][i]; for (var q = 0; q < 8; q++) M[j][q] -= f * M[i][q]; }
+  }
+  var INV = M.map(function (r) { return r.slice(4); });
+  var E = new Float32Array(RW * RH * 3);
+  for (x = X0; x < X0 + RW; x++) for (k = 0; k < 3; k++) {
+    var b = [0, 0, 0, 0];
+    rowsFit.forEach(function (yy) { var v = vand(yy), val = at(x, yy, k); for (i = 0; i < 4; i++) b[i] += v[i] * val; });
+    var co = INV.map(function (r) { return r[0] * b[0] + r[1] * b[1] + r[2] * b[2] + r[3] * b[3]; });
+    for (y = Y0; y < Y0 + RH; y++) { var vv = vand(y); E[((y - Y0) * RW + (x - X0)) * 3 + k] = co[0] * vv[0] + co[1] * vv[1] + co[2] * vv[2] + co[3] * vv[3]; }
+  }
+  function Ev(x2, y2, k2) { return E[((y2 - Y0) * RW + (x2 - X0)) * 3 + k2]; }
+  // 2. clean values inside the two boxes (title, old chip): estimate + residual blended from the rows above and below
+  var clean = new Float32Array(RW * RH * 3);
+  for (y = Y0; y < Y0 + RH; y++) for (x = X0; x < X0 + RW; x++) for (k = 0; k < 3; k++) clean[((y - Y0) * RW + (x - X0)) * 3 + k] = at(x, y, k);
+  [[62, 214, 446, 306], [456, 220, 830, 300]].forEach(function (r) {
+    for (var xx = r[0]; xx < r[2]; xx++) for (var kk = 0; kk < 3; kk++) {
+      var top = 0, bot = 0, n;
+      for (n = 1; n <= 3; n++) { top += at(xx, r[1] - n, kk) - Ev(xx, r[1] - n, kk); bot += at(xx, r[3] + n - 1, kk) - Ev(xx, r[3] + n - 1, kk); }
+      top /= 3; bot /= 3;
+      for (var yy = r[1]; yy < r[3]; yy++) {
+        var t = (yy - (r[1] - 2)) / ((r[3] + 1) - (r[1] - 2));
+        clean[((yy - Y0) * RW + (xx - X0)) * 3 + kk] = Ev(xx, yy, kk) + top * (1 - t) + bot * t;
+      }
+    }
+  });
+  // 3. opacity of the old chip over the clean background, then paint it again 396 px to the left
+  var out = new Float32Array(clean), cx0 = 456, cx1 = 830, cy0 = 220, cy1 = 300;
+  for (y = cy0; y < cy1; y++) for (x = cx0; x < cx1; x++) {
+    var num = 0, den = 0, cl = [];
+    for (k = 0; k < 3; k++) { var cv0 = clean[((y - Y0) * RW + (x - X0)) * 3 + k]; var dk = BONE[k] - cv0; num += (at(x, y, k) - cv0) * dk; den += dk * dk; }
+    var a = den > 0 ? Math.min(1, Math.max(0, num / den)) : 0;
+    if (a < 0.02) continue;
+    for (k = 0; k < 3; k++) {
+      var di = ((y - Y0) * RW + (x + DX - X0)) * 3 + k;
+      out[di] = clean[di] + a * (BONE[k] - clean[di]);
+    }
+  }
+  for (y = Y0; y < Y0 + RH; y++) for (x = X0; x < X0 + RW; x++) for (k = 0; k < 3; k++) {
+    var v2 = Math.round(out[((y - Y0) * RW + (x - X0)) * 3 + k]);
+    d[((y - Y0) * RW + (x - X0)) * 4 + k] = v2 < 0 ? 0 : v2 > 255 ? 255 : v2;
+  }
+  c2.putImageData(id, X0, Y0);
+  return cv2;
+}
+
+bg = new Image();
+bg.onload = function () {
+  try { bgGeneral = buildGeneral(bg); } catch (e) { bgGeneral = null; var g = document.querySelector('input[value="general"]'); if (g) g.disabled = true; }
+  refresh();
+};
+bg.src = BG_SRC;
+Array.prototype.forEach.call(document.querySelectorAll('input[name="tpl"]'), function (r) {
+  r.addEventListener("change", function () {
+    if (!r.checked) return;
+    tpl = r.value; prepared = { key: "", blob: null };
+    $("tpl-hint").textContent = tpl === "general"
+      ? "General invitation has no title. Use it for everyone who is not media."
+      : "Media invite has the MEDIA INVITE title. General invitation has no title, for everyone else.";
+    refresh();
+  });
+});
+</script>
+
+</body>
+</html>
