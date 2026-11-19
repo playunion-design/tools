@@ -85,12 +85,13 @@ canvas { display:block; width:100%; height:auto; box-shadow:0 6px 24px rgba(0,0,
       </fieldset>
 
       <fieldset>
-        <legend>Logos</legend>
+        <legend>Partner logos</legend>
         <div class="opts" role="radiogroup">
           <label class="opt"><input type="radio" name="logos" value="both" checked> SEAEF + PLAY UNION</label>
           <label class="opt"><input type="radio" name="logos" value="pu"> PLAY UNION only</label>
           <label class="opt"><input type="radio" name="logos" value="se"> SEAEF only</label>
         </div>
+        <p class="hint">The UNION logo and the PLAY UNION linktree QR are always on the letter.</p>
       </fieldset>
 
       <fieldset>
@@ -179,12 +180,52 @@ canvas { display:block; width:100%; height:auto; box-shadow:0 6px 24px rgba(0,0,
 "use strict";
 // ---------- page geometry (mm). Same grid as the Figma letters: 840 x 1188 px = 210 x 297 mm ----------
 const PAGE_W = 210, PAGE_H = 297, MX = 16, CW = PAGE_W - 2 * MX;
-const BOTTOM = 281;            // last usable line (mm)
+const BOTTOM = 269;            // last usable line (mm), above the footer (hairline 272)
+const TOP = 40;                // first body line starts below the header
 const PX = 4;                  // preview pixels per mm (840 px wide, DPR applied on top)
 const PT = 25.4 / 72;          // 1 pt in mm
 const SZ = 9.4, LH = 4.9, PGAP = 2.6;   // body size (pt), line height (mm), paragraph gap (mm)
 const COBALT = "#005EFF", INK = "#0A0C14", BONE = "#FCFFED";
 const EV_LABEL_W = 30;
+const GREY = "#6B7080", RULE = "#C9CCD3";
+// UNION lockup XS (black), drawn from the Figma geometry (component "UNION lockup · XS", 160.54 x 78.95)
+const UX_W = 160.54, UX_H = 78.95;
+const UX_N = "M7.65 13.5V38.25H0V0H7.16L23.66 24.76H23.77V0H31.42V38.25H24.26L7.76 13.5Z";
+const UX_PATHS = [
+  [0, 16.35, "M22.13 0H29.78V34.87L23.44 38.53H6.34L0 34.87V0H7.65V31.42H22.13Z"],
+  [34.15, 16.35, UX_N],
+  [69.94, 16.35, "M0 38.25V0H7.65V38.25Z"],
+  [81.96, 16.07, "M29.78 35.14L23.44 38.8H6.34L0 35.14V3.66L6.34 0H23.44L29.78 3.66ZM7.65 6.56V32.24H22.13V6.56Z"],
+  [116.11, 16.35, UX_N]];
+// text with letter spacing, squeezed or stretched to an exact width; cap top at y0
+function uxText(c, str, font, track, x0, y0, w) {
+  c.font = font; const sp = parseFloat(font.match(/([\d.]+)px/)[1]) * track;
+  let tw = 0; for (const ch of str) tw += c.measureText(ch).width + sp; tw -= sp;
+  const cap = c.measureText("H").actualBoundingBoxAscent;
+  c.save(); c.translate(x0, y0 + cap); c.scale(w / tw, 1);
+  let x = 0; for (const ch of str) { c.fillText(ch, x, 0); x += c.measureText(ch).width + sp; }
+  c.restore(); return cap;
+}
+async function makeUnionXS(S) {
+  await Promise.all([document.fonts.load("400 24px SGCO"), document.fonts.load("700 24px SG")]);
+  const cv = document.createElement("canvas"); cv.width = Math.round(UX_W * S); cv.height = Math.round(UX_H * S);
+  const c = cv.getContext("2d"); c.scale(S, S); c.fillStyle = INK; c.textBaseline = "alphabetic";
+  uxText(c, "SEA ESPORTS GAMES & FESTIVAL", "400 12px SGCO", 0.06, 0, 0.4, 147.54);
+  for (const [x, y, d] of UX_PATHS) { c.save(); c.translate(x, y); c.fill(new Path2D(d), "evenodd"); c.restore(); }
+  c.font = "700 15px SG"; const rw = c.measureText("\u00AE").width; c.fillText("\u00AE", 160.54 - rw, 26);
+  c.fill(new Path2D("M28.3 61.95H122.77L119.25 78.95H24.77Z"));
+  c.globalCompositeOperation = "destination-out";
+  const cap = (c.font = "700 12.35px SG", c.measureText("H").actualBoundingBoxAscent);
+  uxText(c, "THAILAND\u201828", "700 12.35px SG", 0.05, 31.27, 70.45 - cap / 2, 85);
+  return loadImg(cv.toDataURL("image/png"));
+}
+// Play Union linktree QR (https://linktr.ee/qr/28303fcc-7337-4609-89aa-70f3c029f5b0), 41 x 41 modules, row by row
+const QR_N = 41, QR_HEX = "1fd00259a7f82ec13fa20dd7f9028176e8bb68d2bb7433f49e5d82f0fbf820ff5555555fc0240708800750be2fae7d44bfb2bead5e967cb68b61994d66f12d88c96f2d6d1f8db57cd99e00092eb71400044b0e788102da501442a0b3db3561f0e273d631fc4fa61678380dadac84360d6db768150913055802024602e081038af2960000b2d9d48000d68a22b0c88eb16c219a1fae8d805e053dcd92e8b83aac310b501c317ff64bdf60081b2a189ff0c8c48d7a090062422775c55689febad6376e50dd51f6bebca08c1ba0eb5fce4346874";
+const QR_RUNS = (() => { const b = BigInt("0x" + QR_HEX).toString(2).padStart(QR_N * QR_N, "0"), r = [];
+  for (let y = 0; y < QR_N; y++) { let x = 0; while (x < QR_N) { if (b[y * QR_N + x] === "1") { const s0 = x; while (x < QR_N && b[y * QR_N + x] === "1") x++; r.push([s0, y, x - s0]); } else x++; } }
+  return r; })();
+// width of a mono (JetBrains Mono, 0.6 em advance) string with the 12% letter spacing used below
+const monoW = (str, sz) => str.length * sz * PT * 0.72 - sz * PT * 0.12;
 
 const EVENT_NAME = "SEA ESPORTS GAMES & FESTIVAL: UNION® — Official Press Conference";
 const INAUG = "The inaugural edition of SEA ESPORTS GAMES & FESTIVAL: UNION®, scheduled to take place in Thailand in 2028, ";
@@ -307,9 +348,29 @@ function wrap(words, width, sz) {
 function layout(s, imgs) {
   const ops = []; let y = 0;
   const logos = s.logos;
-  if (logos === "both" || logos === "se") ops.push({ k: "img", img: "se", x: MX, y: 14, w: 59, h: 17.6 });
-  if (logos === "both" || logos === "pu") ops.push({ k: "img", img: "pu", x: PAGE_W - MX - 47.5, y: 18.5, w: 47.5, h: 8.75 });
-  y = 43;
+  // header: UNION lockup XS on the left (always), partner credit on the right
+  ops.push({ k: "img", img: "ux", x: MX, y: 12, w: 40, h: 40 * UX_H / UX_W });
+  const RX = PAGE_W - MX, LW = 33, seH = LW * 17.6 / 59, puH = LW * 8.75 / 47.5, MID = 26;
+  const lab = (str, xr, yb) => ops.push({ k: "t", t: str, x: xr - monoW(str, 5.4), y: yb, mono: true, sz: 5.4, c: GREY, b: false });
+  if (logos === "both") {
+    lab("CREATED & ORGANISED BY", RX, 15.6);
+    ops.push({ k: "img", img: "se", x: RX - LW - 9 - LW, y: MID - seH / 2, w: LW, h: seH });
+    ops.push({ k: "rect", x: RX - LW - 4.6, y: MID - 5.5, w: 0.2, h: 11, c: RULE });
+    ops.push({ k: "img", img: "pu", x: RX - LW, y: MID - puH / 2, w: LW, h: puH });
+  } else if (logos === "pu") {
+    lab("CREATED & ORGANISED BY", RX, 15.6);
+    ops.push({ k: "img", img: "pu", x: RX - LW, y: MID - puH / 2, w: LW, h: puH });
+  } else if (logos === "se") {
+    ops.push({ k: "img", img: "se", x: RX - LW, y: MID - seH / 2, w: LW, h: seH });
+  }
+  // footer: hairline, enquiries, linktree QR
+  ops.push({ k: "rect", x: MX, y: 272, w: CW, h: 0.2, c: RULE });
+  ops.push({ k: "t", t: "ENQUIRIES", x: MX, y: 277.4, mono: true, sz: 5.4, c: GREY, b: false });
+  ops.push({ k: "t", t: "press@playunion.com", x: MX, y: 280.6, mono: true, sz: 5.4, c: INK, b: false });
+  const QS = 15, QX = RX - QS, QY = 275, m = QS / QR_N;
+  for (const [qx, qy, ql] of QR_RUNS) ops.push({ k: "rect", x: QX + qx * m, y: QY + qy * m, w: ql * m + 0.02, h: m + 0.02, c: INK });
+  lab("SCAN FOR", QX - 3, 277.4); lab("ALL OUR SOCIALS", QX - 3, 280.6);
+  y = TOP;
   const text = (str, bold, opts = {}) => {
     const sz = opts.sz || SZ, w = opts.w || CW, x0 = opts.x || MX;
     const lines = wrap(toWords(str, bold), w, sz);
@@ -369,7 +430,7 @@ function layout(s, imgs) {
 }
 
 // ---------- state ----------
-const imgs = { se: null, pu: null, sig0: null, sig1: null, sig2: null };
+const imgs = { ux: null, se: null, pu: null, sig0: null, sig1: null, sig2: null };
 const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
 function state() {
   return {
@@ -395,7 +456,7 @@ function draw(res, s) {
     else if (o.k === "img" && imgs[o.img]) ctx.drawImage(imgs[o.img], o.x * PX, o.y * PX, o.w * PX, o.h * PX);
   }
   // limit line (visible when close)
-  const pct = Math.min(999, Math.round((res.bottom - 43) / (BOTTOM - 43) * 100));
+  const pct = Math.min(999, Math.round((res.bottom - TOP) / (BOTTOM - TOP) * 100));
   const over = res.bottom > BOTTOM;
   $("bar").classList.toggle("full", over);
   $("bar").firstElementChild.style.width = Math.min(100, pct) + "%";
@@ -494,8 +555,8 @@ $("dl").addEventListener("click", async () => {
     $("sigClear" + i).addEventListener("click", () => { imgs["sig" + i] = null; $("sig" + i).value = ""; $("sigClear" + i).hidden = true; schedule(false); });
   });
   document.querySelectorAll("input[name=nsig]").forEach(r => r.addEventListener("change", () => { syncSigners(); schedule(false); }));
-  Promise.all([loadImg("logos/seaef.png"), loadImg("logos/playunion.png"), document.fonts.load("400 16px SG"), document.fonts.load("700 16px SG"), document.fonts.load("500 16px JBM")]).then(([se, pu]) => {
-    imgs.se = se; imgs.pu = pu; applyPreset(PRESETS[3]); $("preset").value = 3;
+  Promise.all([makeUnionXS(12), loadImg("logos/seaef.png"), loadImg("logos/playunion.png"), document.fonts.load("400 16px SG"), document.fonts.load("700 16px SG"), document.fonts.load("500 16px JBM")]).then(([ux, se, pu]) => {
+    imgs.ux = ux; imgs.se = se; imgs.pu = pu; applyPreset(PRESETS[3]); $("preset").value = 3;
   });
 })();
 </script>
