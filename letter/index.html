@@ -206,6 +206,16 @@ function uxText(c, str, font, track, x0, y0, w) {
   let x = 0; for (const ch of str) { c.fillText(ch, x, 0); x += c.measureText(ch).width + sp; }
   c.restore(); return cap;
 }
+// "CREATED & ORGANISED BY" + PLAY UNION logo in one block (Figma 403:6652: 250 wide, label 70% wide and centred, logo top at 28.6)
+const CR_W = 250, CR_H = 28.6 + 250 * 210 / 1140;
+async function makeCredit(pu, S) {
+  await document.fonts.load("400 24px SGCO");
+  const cv = document.createElement("canvas"); cv.width = Math.round(CR_W * S); cv.height = Math.round(CR_H * S);
+  const c = cv.getContext("2d"); c.scale(S, S); c.fillStyle = INK; c.textBaseline = "alphabetic";
+  uxText(c, "CREATED & ORGANISED BY", "400 18.64px SGCO", 0.04, CR_W * 0.15, 0, CR_W * 0.7);
+  if (pu) c.drawImage(pu, 0, 28.6, CR_W, CR_W * 210 / 1140);
+  return loadImg(cv.toDataURL("image/png"));
+}
 async function makeUnionXS(S) {
   await Promise.all([document.fonts.load("400 24px SGCO"), document.fonts.load("700 24px SG")]);
   const cv = document.createElement("canvas"); cv.width = Math.round(UX_W * S); cv.height = Math.round(UX_H * S);
@@ -350,18 +360,18 @@ function layout(s, imgs) {
   const logos = s.logos;
   // header: UNION lockup XS on the left (always), partner credit on the right
   ops.push({ k: "img", img: "ux", x: MX, y: 12, w: 40, h: 40 * UX_H / UX_W });
-  const RX = PAGE_W - MX, LW = 33, seH = LW * 17.6 / 59, puH = LW * 8.75 / 47.5, MID = 26;
+  const RX = PAGE_W - MX, LW = 33;
   const lab = (str, xr, yb) => ops.push({ k: "t", t: str, x: xr - monoW(str, 5.4), y: yb, mono: true, sz: 5.4, c: GREY, b: false });
+  // credit block as in the Figma "Created & organised by Play Union" (403:6652): label sits right on top of the logo
+  const crH = LW * CR_H / CR_W, sW = LW * 0.84, sH = sW * 17.6 / 59, CM = 21.85;
   if (logos === "both") {
-    lab("CREATED & ORGANISED BY", RX, 15.6);
-    ops.push({ k: "img", img: "se", x: RX - LW - 9 - LW, y: MID - seH / 2, w: LW, h: seH });
-    ops.push({ k: "rect", x: RX - LW - 4.6, y: MID - 5.5, w: 0.2, h: 11, c: RULE });
-    ops.push({ k: "img", img: "pu", x: RX - LW, y: MID - puH / 2, w: LW, h: puH });
+    ops.push({ k: "img", img: "se", x: RX - LW - 0.24 * LW - sW, y: CM - sH / 2, w: sW, h: sH });
+    ops.push({ k: "rect", x: RX - LW - 0.12 * LW - 0.1, y: CM - crH * 0.86, w: 0.2, h: crH * 1.72, c: RULE });
+    ops.push({ k: "img", img: "cr", x: RX - LW, y: CM - crH / 2, w: LW, h: crH });
   } else if (logos === "pu") {
-    lab("CREATED & ORGANISED BY", RX, 15.6);
-    ops.push({ k: "img", img: "pu", x: RX - LW, y: MID - puH / 2, w: LW, h: puH });
+    ops.push({ k: "img", img: "cr", x: RX - LW, y: CM - crH / 2, w: LW, h: crH });
   } else if (logos === "se") {
-    ops.push({ k: "img", img: "se", x: RX - LW, y: MID - seH / 2, w: LW, h: seH });
+    ops.push({ k: "img", img: "se", x: RX - sW, y: CM - sH / 2, w: sW, h: sH });
   }
   // footer: hairline, enquiries, linktree QR
   ops.push({ k: "rect", x: MX, y: 272, w: CW, h: 0.2, c: RULE });
@@ -430,7 +440,7 @@ function layout(s, imgs) {
 }
 
 // ---------- state ----------
-const imgs = { ux: null, se: null, pu: null, sig0: null, sig1: null, sig2: null };
+const imgs = { ux: null, cr: null, se: null, pu: null, sig0: null, sig1: null, sig2: null };
 const loadImg = src => new Promise(res => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = src; });
 function state() {
   return {
@@ -555,8 +565,8 @@ $("dl").addEventListener("click", async () => {
     $("sigClear" + i).addEventListener("click", () => { imgs["sig" + i] = null; $("sig" + i).value = ""; $("sigClear" + i).hidden = true; schedule(false); });
   });
   document.querySelectorAll("input[name=nsig]").forEach(r => r.addEventListener("change", () => { syncSigners(); schedule(false); }));
-  Promise.all([makeUnionXS(12), loadImg("logos/seaef.png"), loadImg("logos/playunion.png"), document.fonts.load("400 16px SG"), document.fonts.load("700 16px SG"), document.fonts.load("500 16px JBM")]).then(([ux, se, pu]) => {
-    imgs.ux = ux; imgs.se = se; imgs.pu = pu; applyPreset(PRESETS[3]); $("preset").value = 3;
+  Promise.all([makeUnionXS(12), loadImg("logos/seaef.png"), loadImg("logos/playunion.png"), document.fonts.load("400 16px SG"), document.fonts.load("700 16px SG"), document.fonts.load("500 16px JBM")]).then(async ([ux, se, pu]) => {
+    imgs.ux = ux; imgs.se = se; imgs.pu = pu; imgs.cr = await makeCredit(pu, 8); applyPreset(PRESETS[3]); $("preset").value = 3;
   });
 })();
 </script>
