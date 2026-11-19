@@ -294,7 +294,7 @@ const PRESETS = [
   { id: "media", name: "Media invitation (SEAEF + PLAY UNION)", logos: "both",
     addr: "", subject: "OFFICIAL INVITATION TO THE SEAEF – PLAY UNION 2028 PRESS CONFERENCE", sal: "Dear …,", closing: "Yours sincerely,", ev: true,
     event: { event: "", date: "Thursday, 26 November 2026", time: "11:00 AM (Bangkok time, UTC+7)", venue: "Cloud 11, Bangkok, Thailand" },
-    signers: [ { name: "Do Viet Hung", role: "President", org: "Southeast Asian Esports Federation (SEAEF)" }, { name: "Charina Widjaja", role: "Chief Brand & Partnerships Officer", org: "PLAY UNION" } ],
+    signers: [ { name: "Do Viet Hung", role: "President", org: "Southeast Asian Esports Federation (SEAEF)" }, { name: "Charina Widjaja", role: "Chief Operating Officer", org: "PLAY UNION" } ],
     body: J([
       "On behalf of the Southeast Asian Esports Federation (SEAEF), we are pleased to invite you to the official unveiling of SEA ESPORTS GAMES & FESTIVAL: UNION®, Southeast Asia’s first fully gamified esports and entertainment festival, at a press conference in Bangkok, Thailand.",
       "Owned by SEAEF and developed in collaboration with its business partner PLAY UNION, the initiative will bring together a flagship esports championship featuring national teams from all 11 Southeast Asian countries, alongside an interactive festival celebrating gaming, music, creators, technology and culture.",
@@ -493,7 +493,7 @@ function applyPreset(p) {
   document.querySelector(`input[name=logos][value=${p.logos}]`).checked = true;
   $("addr").value = p.addr; $("subject").value = p.subject; $("sal").value = p.sal;
   $("closing").value = p.closing;
-  const sg = p.signers || [{ name: p.sname, role: "Chief Brand & Partnerships Officer", org: "PLAY UNION" }];
+  const sg = p.signers || [{ name: p.sname, role: "Chief Operating Officer", org: "PLAY UNION" }];
   [0, 1, 2].forEach(i => { const q = sg[i] || { name: "", role: "", org: "" }; $("sname" + i).value = q.name; $("srole" + i).value = q.role; $("sorg" + i).value = q.org; });
   document.querySelector('input[name=nsig][value="' + sg.length + '"]').checked = true; syncSigners();
   const E = p.event || {}; $("e_event").value = E.event !== undefined ? E.event : EVENT_NAME; $("e_date").value = E.date || "Thursday, 26 November 2026"; $("e_time").value = E.time || "11:00 AM onwards"; $("e_venue").value = E.venue || "Cloud 11, Bangkok, Thailand";
